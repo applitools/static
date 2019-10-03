@@ -22,15 +22,6 @@ html {
   left: -4px;
 }
 
-.story {
-  position: absolute;
-  background: rgba(255,0,0,0.3);
-}
-
-.story:hover {
-  background: rgba(255,0,0,1);
-}
-
 .story:hover .story-name {
   display: block;
 }
@@ -51,4 +42,22 @@ html {
 .getting-data {
   position: absolute;
   background: rgba(0,80,0,0.5);
+}
+
+.vg {
+  position: absolute;
+  background: rgba(255,0,0,0.3);
+}
+
+.vg:hover {
+  background: rgba(255,0,0,1);
+}
+
+.eyes {
+  position: absolute;
+  background: rgba(0,0,255,0.3);
+}
+
+.eyes:hover {
+  background: rgba(0,0,255,1);
 }

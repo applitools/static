@@ -4,7 +4,7 @@
 const PIXEL_PER_SECOND = 10;
 const SECONDS_PER_NOTCH = 5;
 const VERTICAL_SPACE_BETWEEN_STORIES = 1;
-const STORY_HEIGHT = 1;
+const STORY_HEIGHT = 2;
 
 window.renderTimeline = function renderTimeline(data) {
   const maxTime = Object.values(data).reduce(
@@ -20,7 +20,7 @@ window.renderTimeline = function renderTimeline(data) {
   }
 
   for (const name in data) {
-    const {start, end, gettingData} = data[name];
+    const {start, end, gettingData, screenshotAvailable} = data[name];
     const gettingData0 = gettingData === start ? start - 0.5 : gettingData;
 
     const gettingDataDiv = document.createElement('div');
@@ -29,11 +29,17 @@ window.renderTimeline = function renderTimeline(data) {
     gettingDataDiv.style.width = PIXEL_PER_SECOND * (start - gettingData0) + 'px';
     gettingDataDiv.style.height = STORY_HEIGHT + 'px';
 
-    const storyDiv = document.createElement('div');
-    storyDiv.classList.add('story');
-    storyDiv.style.left = PIXEL_PER_SECOND * start + 'px';
-    storyDiv.style.width = PIXEL_PER_SECOND * (end - start) + 'px';
-    storyDiv.style.height = STORY_HEIGHT + 'px';
+    const vgDiv = document.createElement('div');
+    vgDiv.classList = 'vg';
+    vgDiv.style.left = PIXEL_PER_SECOND * start + 'px';
+    vgDiv.style.width = PIXEL_PER_SECOND * (screenshotAvailable - start) + 'px';
+    vgDiv.style.height = STORY_HEIGHT + 'px';
+
+    const eyesDiv = document.createElement('div');
+    eyesDiv.classList.add('eyes');
+    eyesDiv.style.left = PIXEL_PER_SECOND * screenshotAvailable + 'px';
+    eyesDiv.style.width = PIXEL_PER_SECOND * (end - screenshotAvailable) + 'px';
+    eyesDiv.style.height = STORY_HEIGHT + 'px';
 
     const interesctions = calcExistingIntersectingStories({start, end});
     maxIntersections = Math.max(maxIntersections, interesctions);
@@ -42,15 +48,17 @@ window.renderTimeline = function renderTimeline(data) {
       STORY_HEIGHT * interesctions +
       VERTICAL_SPACE_BETWEEN_STORIES * interesctions +
       'px';
-    storyDiv.style.top = top;
+    vgDiv.style.top = top;
+    eyesDiv.style.top = top;
     gettingDataDiv.style.top = top;
 
     const span = document.createElement('span');
     span.classList.add('story-name');
     span.textContent = `${name} [${start}s - ${end}s] [${end - start}s]`;
-    storyDiv.appendChild(span);
+    vgDiv.appendChild(span);
 
-    timeline.appendChild(storyDiv);
+    timeline.appendChild(eyesDiv);
+    timeline.appendChild(vgDiv);
     timeline.appendChild(gettingDataDiv);
     rendered.push({start, end});
   }

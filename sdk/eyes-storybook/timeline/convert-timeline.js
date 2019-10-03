@@ -6,8 +6,11 @@ window.convertTimeline = function convertTimeline(logStr) {
   const reGettingData = /\(\):.+getting data from story (.+)/;
   const reStart = /running story (.+)$/;
   const reEnd = /finished story (.+) in .+$/;
+  const reRenderId = /render request complete for (.+). test=(.+) stepCount/;
+  const reScreenshotAvailable = /screenshot available for (.+) at /;
   const reTimestamp = /\[\+(\d+)s\]/;
   const timing = {};
+  const storiesByRenderId = {};
 
   lines.forEach(line => {
     const matchTime = line.match(reTimestamp);
@@ -16,6 +19,8 @@ window.convertTimeline = function convertTimeline(logStr) {
       const matchStart = line.match(reStart);
       const matchEnd = line.match(reEnd);
       const matchGettingData = line.match(reGettingData);
+      const matchRenderId = line.match(reRenderId);
+      const matchScreenshotAvailable = line.match(reScreenshotAvailable);
 
       if (matchStart) {
         const storyName = matchStart[1];
@@ -27,6 +32,16 @@ window.convertTimeline = function convertTimeline(logStr) {
       } else if (matchGettingData) {
         const storyName = matchGettingData[1];
         timing[storyName] = {gettingData: ts};
+      } else if (matchRenderId) {
+        const storyName = matchRenderId[2];
+        const renderId = matchRenderId[1];
+        const story = timing[storyName];
+        storiesByRenderId[renderId] = story;
+        story.renderId = renderId;
+      } else if (matchScreenshotAvailable) {
+        const renderId = matchScreenshotAvailable[1];
+        const story = storiesByRenderId[renderId];
+        story.screenshotAvailable = ts;
       }
     } else {
       // console.log('no timestamp found for line', line)
