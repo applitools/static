@@ -4,7 +4,7 @@
 const PIXEL_PER_SECOND = 10;
 const SECONDS_PER_NOTCH = 5;
 const VERTICAL_SPACE_BETWEEN_STORIES = 1;
-const STORY_HEIGHT = 2;
+const STORY_HEIGHT = 1;
 
 window.renderTimeline = function renderTimeline(data) {
   const maxTime = Object.values(data).reduce(
@@ -20,7 +20,7 @@ window.renderTimeline = function renderTimeline(data) {
   }
 
   for (const name in data) {
-    const {start, end, gettingData, screenshotAvailable} = data[name];
+    const {start, end, gettingData, screenshotAvailable, checkWindowStart} = data[name];
     const gettingData0 = gettingData === start ? start - 0.5 : gettingData;
 
     const gettingDataDiv = document.createElement('div');
@@ -37,9 +37,15 @@ window.renderTimeline = function renderTimeline(data) {
 
     const eyesDiv = document.createElement('div');
     eyesDiv.classList.add('eyes');
-    eyesDiv.style.left = PIXEL_PER_SECOND * screenshotAvailable + 'px';
-    eyesDiv.style.width = PIXEL_PER_SECOND * (end - screenshotAvailable) + 'px';
+    eyesDiv.style.left = PIXEL_PER_SECOND * checkWindowStart + 'px';
+    eyesDiv.style.width = PIXEL_PER_SECOND * (end - checkWindowStart) + 'px';
     eyesDiv.style.height = STORY_HEIGHT + 'px';
+
+    const gapDiv = document.createElement('div');
+    gapDiv.classList.add('gap');
+    gapDiv.style.left = PIXEL_PER_SECOND * screenshotAvailable + 'px';
+    gapDiv.style.width = PIXEL_PER_SECOND * (checkWindowStart - screenshotAvailable) + 'px';
+    gapDiv.style.height = STORY_HEIGHT + 'px';
 
     const interesctions = calcExistingIntersectingStories({start, end});
     maxIntersections = Math.max(maxIntersections, interesctions);
@@ -51,6 +57,7 @@ window.renderTimeline = function renderTimeline(data) {
     vgDiv.style.top = top;
     eyesDiv.style.top = top;
     gettingDataDiv.style.top = top;
+    gapDiv.style.top = top;
 
     const span = document.createElement('span');
     span.classList.add('story-name');
@@ -60,6 +67,7 @@ window.renderTimeline = function renderTimeline(data) {
     timeline.appendChild(eyesDiv);
     timeline.appendChild(vgDiv);
     timeline.appendChild(gettingDataDiv);
+    timeline.appendChild(gapDiv);
     rendered.push({start, end});
   }
 

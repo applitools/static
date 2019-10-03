@@ -8,6 +8,7 @@ window.convertTimeline = function convertTimeline(logStr) {
   const reEnd = /finished story (.+) in .+$/;
   const reRenderId = /render request complete for (.+). test=(.+) stepCount/;
   const reScreenshotAvailable = /screenshot available for (.+) at /;
+  const reCheckWindow = /running wrapper.checkWindow for test (.+) stepCount/;
   const reTimestamp = /\[\+(\d+)s\]/;
   const timing = {};
   const storiesByRenderId = {};
@@ -21,6 +22,7 @@ window.convertTimeline = function convertTimeline(logStr) {
       const matchGettingData = line.match(reGettingData);
       const matchRenderId = line.match(reRenderId);
       const matchScreenshotAvailable = line.match(reScreenshotAvailable);
+      const matchCheckWindow = line.match(reCheckWindow);
 
       if (matchStart) {
         const storyName = matchStart[1];
@@ -42,6 +44,9 @@ window.convertTimeline = function convertTimeline(logStr) {
         const renderId = matchScreenshotAvailable[1];
         const story = storiesByRenderId[renderId];
         story.screenshotAvailable = ts;
+      } else if (matchCheckWindow) {
+        const storyName = matchCheckWindow[1];
+        timing[storyName].checkWindowStart = ts;
       }
     } else {
       // console.log('no timestamp found for line', line)

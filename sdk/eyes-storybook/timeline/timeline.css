@@ -61,3 +61,12 @@ html {
 .eyes:hover {
   background: rgba(0,0,255,1);
 }
+
+.gap {
+  position: absolute;
+  background: rgba(0,255,0, 0.3);
+}
+
+.gap:hover {
+  background: rgba(0,255,0, 1);
+}
